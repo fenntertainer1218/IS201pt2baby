@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Clean Blog - Start Bootstrap Theme</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+               
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">Resume</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="scratch/index.html">Scratch</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Game</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+            <title>Platform Jumper</title>
+            <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+            <style>
+                body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    background-color: #333; /* Darker background outside game */
+                    margin: 0;
+                    font-family: 'Press Start 2P', cursive;
+                    color: #e0e0e0;
+                    overflow: hidden; /* Prevent scrolling page */
+                }
+        
+                #game-container {
+                    width: 400px;
+                    height: 600px;
+                    /* Mountain background gradient */
+                    background: linear-gradient(to bottom, #87CEEB 0%, #a9a9a9 70%, #8B4513 100%); /* Sky blue -> Gray -> Brown */
+                    border: 5px solid #666; /* Darker border */
+                    border-radius: 10px;
+                    position: relative; /* For absolute positioning inside */
+                    overflow: hidden; /* Crucial: hides platforms outside */
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Adjusted shadow */
+                }
+        
+                #character {
+                    width: 30px;
+                    height: 30px;
+                    position: absolute;
+                    bottom: 50px; /* Initial position (updated by JS) */
+                    left: 185px; /* Initial position (updated by JS) */
+                    z-index: 10;
+                    /* Background color removed - using SVG */
+                }
+        
+                #character svg {
+                    width: 100%;
+                    height: 100%;
+                    /* Add drop shadow for visibility */
+                    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+                }
+        
+                .platform {
+                    height: 15px;
+                    /* Platform color adjusted for contrast */
+                    background-color: #A0522D; /* Sienna brown */
+                    border: 2px solid #696969; /* Dim Gray border */
+                    border-radius: 5px;
+                    position: absolute;
+                    z-index: 5;
+                    box-shadow: 0 3px 4px rgba(0,0,0,0.4); /* Slightly stronger shadow */
+                }
+                 /* Optional: Add subtle texture to platforms */
+                .platform::before {
+                     content: "";
+                     position: absolute;
+                     top: 0; left: 0; right: 0; bottom: 0;
+                     background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+                     background-size: 5px 5px;
+                     opacity: 0.5;
+                     border-radius: 3px; /* Match parent */
+                }
+        
+        
+                #info-display {
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    right: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.9em;
+                    /* Dark text for light background */
+                    color: #1a1a2e;
+                    z-index: 20;
+                    pointer-events: none; /* Allow clicks/taps through */
+                     /* Light shadow for dark text */
+                    text-shadow: 1px 1px 1px rgba(255,255,255,0.7);
+                }
+                #score {
+                     text-align: right;
+                }
+        
+                /* Game Over Screen */
+                #game-over-screen {
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                     /* Darker overlay */
+                    background-color: rgba(51, 51, 51, 0.85);
+                    display: none; /* Hidden by default */
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                    z-index: 30;
+                    color: #fff;
+                    padding: 20px;
+                }
+                #game-over-screen h2 {
+                     font-size: 1.8em;
+                     margin-bottom: 15px;
+                     color: #e74c3c; /* Red 'Game Over' */
+                }
+                #final-score {
+                     font-size: 1.2em;
+                     margin-bottom: 30px;
+                     color: #f1c40f; /* Yellow score */
+                }
+                #restart-button {
+                    font-family: 'Press Start 2P', cursive;
+                    padding: 15px 30px;
+                    font-size: 1em;
+                    cursor: pointer;
+                    background-color: #2ecc71; /* Green */
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                }
+                 #restart-button:active {
+                     transform: translateY(2px);
+                 }
+        
+            </style>
+        </head>
+        <body>
+            <div id="game-container">
+                <div id="info-display">
+                    <div id="height">Height: 0</div>
+                    <div id="score">High Score: 0</div>
+                </div>
+        
+                <div id="character">
+                     <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                         <rect x="5" y="15" width="20" height="13" rx="3" fill="#e74c3c"/> <circle cx="15" cy="8" r="6" fill="#f1c40f"/> <rect x="12" y="5" width="6" height="3" fill="#3498db"/> </svg>
+                </div>
+        
+                <div id="game-over-screen">
+                    <h2>GAME OVER!</h2>
+                    <p id="final-score">Your Score: 0</p>
+                    <button id="restart-button">Restart Game</button>
+                </div>
+            </div>
+        
+            <script>
+                // --- DOM Elements ---
+                const gameContainer = document.getElementById('game-container');
+                const character = document.getElementById('character');
+                const heightDisplay = document.getElementById('height');
+                const scoreDisplay = document.getElementById('score'); // High score display
+                const gameOverScreen = document.getElementById('game-over-screen');
+                const finalScoreDisplay = document.getElementById('final-score');
+                const restartButton = document.getElementById('restart-button');
+        
+                // --- Game Constants & Configuration ---
+                const GRAVITY = 0.5;
+                const JUMP_FORCE = 13; // Increased jump force slightly
+                const MOVE_SPEED = 5;
+                const FRICTION = 0.85;
+                const PLATFORM_HEIGHT = 15;
+                const CHARACTER_WIDTH = 30;
+                const CHARACTER_HEIGHT = 30;
+                const CONTAINER_WIDTH = gameContainer.offsetWidth;
+                const CONTAINER_HEIGHT = gameContainer.offsetHeight;
+                const CAMERA_THRESHOLD_Y = CONTAINER_HEIGHT * 0.4;
+                const START_PLATFORM_Y = 50;
+        
+                // --- Game State ---
+                let characterX = CONTAINER_WIDTH / 2 - CHARACTER_WIDTH / 2;
+                let characterY = START_PLATFORM_Y + PLATFORM_HEIGHT;
+                let velocityX = 0;
+                let velocityY = 0;
+                let isGrounded = true;
+                let platforms = [];
+                let score = 0;
+                let highScore = localStorage.getItem('platformerHighScore') || 0;
+                let gameLoopId = null;
+                let keys = { left: false, right: false, up: false };
+                let worldOffsetY = 0;
+                let nextPlatformY = 100; // Y position for the *bottom* of the next platform
+                let gameActive = true;
+        
+                // --- Platform Generation ---
+                function addPlatform(x, y, width) {
+                    const platformElement = document.createElement('div');
+                    platformElement.classList.add('platform');
+                    platformElement.style.width = `${width}px`;
+                    platformElement.style.left = `${x}px`;
+                    const platformData = { x, y, width, element: platformElement };
+                    platforms.push(platformData);
+                    updatePlatformPosition(platformData);
+                    gameContainer.appendChild(platformElement);
+                }
+        
+                function updatePlatformPosition(platformData) {
+                    platformData.element.style.bottom = `${platformData.y - worldOffsetY}px`;
+                }
+        
+                function generatePlatforms() {
+                    const generationTopY = worldOffsetY + CONTAINER_HEIGHT + 100;
+                    while (nextPlatformY < generationTopY) {
+                        const difficultyFactor = Math.min(score / 1000, 1);
+                        const minWidth = 40;
+                        const maxWidth = 120;
+                        const platformWidth = Math.max(minWidth, maxWidth - (maxWidth - minWidth) * difficultyFactor);
+                        const platformX = Math.random() * (CONTAINER_WIDTH - platformWidth);
+        
+                        // Adjust vertical gaps for easier jumps initially
+                        const minGapY = 70; // Reduced minimum gap
+                        const maxGapY = 130; // Reduced maximum gap
+                        const gapY = minGapY + Math.random() * (maxGapY - minGapY);
+                        nextPlatformY += gapY; // This is the Y for the bottom of the platform
+        
+                        addPlatform(platformX, nextPlatformY, platformWidth);
+                    }
+                }
+        
+                function removeOldPlatforms() {
+                    const removalThresholdY = worldOffsetY - 50;
+                    platforms = platforms.filter(p => {
+                        if (p.y + PLATFORM_HEIGHT < removalThresholdY) {
+                            p.element.remove();
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+        
+                // --- Collision Detection ---
+                function checkCollisions() {
+                    let landedOnPlatform = false;
+                    const charBottom = characterY;
+                    const charTop = characterY + CHARACTER_HEIGHT;
+                    const charLeft = characterX;
+                    const charRight = characterX + CHARACTER_WIDTH;
+        
+                    platforms.forEach(platform => {
+                        const platformTop = platform.y + PLATFORM_HEIGHT;
+                        const platformBottom = platform.y;
+                        const platformLeft = platform.x;
+                        const platformRight = platform.x + platform.width;
+        
+                        if (charRight > platformLeft && charLeft < platformRight) {
+                            const previousBottom = charBottom - velocityY;
+                            if (velocityY <= 0 &&
+                                charBottom <= platformTop &&
+                                previousBottom >= platformTop)
+                                {
+                                    landedOnPlatform = true;
+                                    velocityY = 0;
+                                    characterY = platformTop;
+                                }
+                        }
+                    });
+                    isGrounded = landedOnPlatform;
+                }
+        
+                // --- Camera/Scrolling ---
+                function updateCamera() {
+                    const threshold = worldOffsetY + CAMERA_THRESHOLD_Y;
+                    if (characterY > threshold) {
+                        const scrollAmount = characterY - threshold;
+                        worldOffsetY += scrollAmount;
+                        platforms.forEach(updatePlatformPosition);
+                    }
+                    character.style.bottom = `${characterY - worldOffsetY}px`;
+                }
+        
+                // --- Game Loop ---
+                function gameLoop() {
+                    if (!gameActive) return;
+        
+                    // 1. Handle Input
+                    if (keys.left) velocityX = -MOVE_SPEED;
+                    else if (keys.right) velocityX = MOVE_SPEED;
+                    if (!keys.left && !keys.right) {
+                         velocityX *= FRICTION;
+                         if (Math.abs(velocityX) < 0.1) velocityX = 0;
+                    }
+                    if (keys.up && isGrounded) {
+                        velocityY = JUMP_FORCE;
+                        isGrounded = false;
+                    }
+        
+                    // 2. Apply Physics & Update Position
+                     if (isGrounded && velocityY < 0) velocityY = 0;
+                     if (!isGrounded) velocityY -= GRAVITY;
+                    characterX += velocityX;
+                    characterY += velocityY;
+        
+                    // 3. Check Collisions
+                    checkCollisions();
+        
+                    // Wall boundaries
+                    if (characterX < 0) { characterX = 0; velocityX = 0; }
+                    else if (characterX + CHARACTER_WIDTH > CONTAINER_WIDTH) { characterX = CONTAINER_WIDTH - CHARACTER_WIDTH; velocityX = 0; }
+        
+                    // 4. Update Score & High Score
+                    score = Math.max(score, Math.floor(characterY));
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem('platformerHighScore', highScore);
+                    }
+                    heightDisplay.textContent = `Height: ${score}`;
+                    scoreDisplay.textContent = `High Score: ${highScore}`;
+        
+                    // 5. Update Camera
+                    updateCamera();
+        
+                    // 6. Generate/Remove Platforms
+                    generatePlatforms();
+                    removeOldPlatforms();
+        
+                    // 7. Update Character Visual Position
+                    character.style.left = `${characterX}px`;
+        
+                    // 8. Check Game Over
+                    if (characterY < worldOffsetY - CHARACTER_HEIGHT) {
+                        gameOver();
+                        return;
+                    }
+        
+                    // 9. Request Next Frame
+                    gameLoopId = requestAnimationFrame(gameLoop);
+                }
+        
+                // --- Game Over ---
+                function gameOver() {
+                    gameActive = false;
+                    if (gameLoopId) {
+                         cancelAnimationFrame(gameLoopId);
+                         gameLoopId = null;
+                    }
+                    finalScoreDisplay.textContent = `Your Score: ${score}`;
+                    gameOverScreen.style.display = 'flex';
+                }
+        
+                // --- Reset Game ---
+                function resetGame() {
+                     if (gameLoopId) {
+                         cancelAnimationFrame(gameLoopId);
+                         gameLoopId = null;
+                     }
+                    characterX = CONTAINER_WIDTH / 2 - CHARACTER_WIDTH / 2;
+                    characterY = START_PLATFORM_Y + PLATFORM_HEIGHT;
+                    velocityX = 0;
+                    velocityY = 0;
+                    isGrounded = true;
+                    score = 0;
+                    worldOffsetY = 0;
+                    nextPlatformY = 100; // Reset next platform height
+                    keys = { left: false, right: false, up: false };
+                    platforms.forEach(p => p.element.remove());
+                    platforms = [];
+                    addPlatform(CONTAINER_WIDTH / 2 - 50, START_PLATFORM_Y, 100);
+                    updateCamera();
+                    character.style.left = `${characterX}px`;
+                    gameOverScreen.style.display = 'none';
+                    gameActive = true;
+                    if (gameLoopId) cancelAnimationFrame(gameLoopId); // Ensure again before starting
+                    gameLoopId = requestAnimationFrame(gameLoop);
+                }
+        
+                // --- Event Listeners ---
+                function handleKeyDown(e) {
+                     if (!gameActive && e.key === 'Enter') { resetGame(); return; }
+                     if (!gameActive) return;
+                    if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+                    if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+                    if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') && !keys.up) {
+                         keys.up = true;
+                         e.preventDefault();
+                    }
+                }
+                function handleKeyUp(e) {
+                    if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+                    if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+                    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.up = false;
+                }
+        
+                // --- Initialization ---
+                function init() {
+                    scoreDisplay.textContent = `High Score: ${highScore}`;
+                    document.addEventListener('keydown', handleKeyDown);
+                    document.addEventListener('keyup', handleKeyUp);
+                    restartButton.addEventListener('click', resetGame);
+                    resetGame(); // Start the game initially
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
+        
+            </script>
+        </body>
+        </html>
+        
+    </body>
+</html>

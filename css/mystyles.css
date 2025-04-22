@@ -1,0 +1,10 @@
+body{
+    font-family: 'Charlesworth';
+    background-color: rgb(244, 249, 254);
+}
+h1, h2, h3 .subheading{
+    font-family: 'Charlesworth';
+}
+a:hover{
+    color: rgb(249, 181, 56) !important;
+}
